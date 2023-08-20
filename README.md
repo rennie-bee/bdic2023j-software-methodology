@@ -1,4 +1,4 @@
-# **Q&A Platform**
+# **bdic-2023j-software-methodology-study-abroad-platform**
 ## **1.  Introduction**
 This project is a special Q&A Platform for students.
 
