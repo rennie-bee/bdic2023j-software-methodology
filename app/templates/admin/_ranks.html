@@ -1,0 +1,32 @@
+<li class="post" id="{{ rank.id }}">
+    <div class="panel panel-default" style="margin-top: 10px">
+          <div class="panel-body">
+              <div class="post-content col-sm-12">
+    {#            标题#}
+                     <a class="head-photo" >
+                         <img class="img-rounded profile-thumbnail" src="{{ rank.picture_path }}" alt="logo"  style="width: 40px; height: 40px">
+                     </a>
+                    <div style="margin: 20px; float: right">
+                        <a href="{{ url_for('admin.delete_rank', name=rank.name) }}">
+                            <button class="btn btn-info">Delete</button>
+                        </a>
+                    </div>
+                    <h3 class="post-title" style="margin-top: 7px">
+                        <a href={{ rank.website }}>
+                            {{ rank.name }}
+                        </a>
+                    </h3>
+
+    {#            摘要#}
+                    <div class="post-body">
+                    <p>
+                        {{ rank.country }}
+                        <br>
+                        <br>
+                        {{ rank.id }}
+                        </p>
+                    </div>
+              </div>
+          </div>
+    </div>
+</li>

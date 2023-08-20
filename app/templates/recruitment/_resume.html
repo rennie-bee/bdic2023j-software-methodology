@@ -1,0 +1,47 @@
+<li class="transaction" id="{{ resume.id }}">
+    <div class="panel panel-primary">
+        <!-- Default panel contents -->
+        <div class="panel-heading">
+            <h3 class="item-name" style="display: inline">
+                <strong>Recruitment: </strong>
+                <a href="{{ url_for('recruitment.recruitments', id=resume.recruitment.id)}}" style="color: antiquewhite">
+                {{resume.recruitment.title}}</a>
+            </h3>
+        </div>
+      <!-- List group -->
+        <ul class="list-group">
+            <li class="list-group-item">
+                <strong>Status: </strong>
+                {% if resume.status == 0 %}
+                    <strong style="color: blue">In Progress</strong>
+                {% elif resume.status == 1 %}
+                    <strong style="color: green">Pass</strong>
+                {% else %}
+                    <strong style="color: red">Dismiss</strong>
+                {% endif %}
+            </li>
+            <li class="list-group-item">
+                <strong>Leave Message: </strong>{{ resume.message }}
+            </li>
+            <li class="list-group-item">
+                <strong>Download Resume: </strong>
+                <a href="{{ url_for('recruitment.download_my_resume', filename=resume.resume_name) }}">{{ resume.resume_name }}</a>
+            </li>
+        </ul>
+
+        <div class="panel-footer">
+             <a class="head-photo" href="{{ url_for('main.user', username=resume.student.username) }}">
+                 {% if resume.student.avatar_img %}
+                     <img class="img-rounded profile-thumbnail" src="{{ resume.student.avatar_img }}" alt="avatar"  style="width: 25px; height: 25px">
+                 {% else %}
+                     <img class="img-rounded profile-thumbnail" src="{{ resume.student.gravatar(size=25) }}" alt="avatar">
+                 {% endif %}
+            </a>
+            <span class="post-author">
+                <a href="{{ url_for('main.user', username=resume.student.username) }}"> {{ resume.student.username }} </a>
+            </span>
+
+            <span class="post-date"> {{ moment(resume.timestamp).fromNow() }} </span>
+        </div>
+    </div>
+</li>

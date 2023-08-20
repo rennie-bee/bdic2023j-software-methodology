@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>display pdf</title>
+        <link rel="stylesheet" href="css/bootstrap.min.css" />
+        <style>
+            html,body{
+                height: 100%;
+                overflow: hidden;
+            }
+
+            #example1{
+                height: 100%;
+            }
+
+            .pdfobject-container{
+                /* height: 500px; */
+            }
+
+            .pdfobject{
+                /* border: 1px solid #666; */
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="example1"></div>
+
+        <script type="text/javascript" src="../../static/pdfobject.js"></script>
+        <script>
+            PDFObject.embed({{ file }}, "#example1");
+        </script>
+    </body>
+</html>

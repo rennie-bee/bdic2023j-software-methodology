@@ -1,0 +1,27 @@
+<ul class="posts list-unstyled">
+    {% for recruit in recruitments %}
+        <li class="post">
+            <div class="post-box">
+
+                <div class="post-content">
+                    <h3 class="post-title">
+                        <a href="{{ url_for('recruitment.recruitments', id=recruit.id) }}">{{ recruit.title }}</a>
+                    </h3>
+                    <div class="post-body">
+                       <p>
+                           {{ recruit.description }}
+                            <small><a href="{{ url_for('recruitment.recruitments', id=recruit.id) }}"><B>Read More</B></a></small>
+                       </p>
+                    </div>
+                    <div class="post-footer">
+                        <span class="post-date">
+                            <span class="glyphicon glyphicon-time"></span>
+                            {{ moment(recruit.timestamp).fromNow() }}
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        </li>
+    {% endfor %}
+</ul>

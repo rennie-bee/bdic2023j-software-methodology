@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block title %}Post{% endblock %}
+
+{# 招募詳情頁面，展示招募信息，教授信息 #}
+
+{%block styles%}
+{{super()}}
+    <link href="{{ url_for('static', filename='editormd/css/editormd.preview.min.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='editormd/css/editormd.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='single_post.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='comments.css') }}" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="../static/edit_Profile.css"/>
+{%endblock%}
+
+
+{%block scripts%}
+{{super()}}
+    <script type="text/javascript" src="{{ url_for('static', filename='editormd/lib/marked.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='editormd/lib/prettify.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='editormd/editormd.min.js') }}"></script>
+
+    <script type="text/javascript">
+        editormd.markdownToHTML("fancy-content", {
+        htmlDecode      : "style,script,iframe",
+        emoji           : true,
+        taskList        : true,
+    });
+    </script>
+    <script>
+        var comment = document.getElementById('body')
+        comment.className = 'form-control'
+        comment.style = "margin:30px; height:100px; width:730px; overflow:auto; resize: none;";
+        var submit = document.getElementById('submit')
+        submit.className = 'btn btn-primary';
+        submit.style = "margin-left: 40px; margin-top: 30px";
+    </script>
+
+{%endblock%}
+
+
+{% block page_content %}
+    <ul class="posts list-unstyled">
+        <li class="post">
+            <div class="post-box">
+                <div class="post-content col-sm-offset-1 col-sm-10" style="background-color: #ccecff">
+                    {#标题#}
+                    <h1 class="post-title text-center">
+                        <a href="{{ url_for('recruitment.recruitments', id=recruitment.id) }}">
+                            {{ recruitment.title }}
+                        </a>
+                    </h1>
+                    {#正文#}
+                    <div class="content" id="fancy-content" style="background-color: #ccecff">
+                        {{ recruitment.description }}
+                    </div>
+                    <div style="margin: 20px; float: right">
+                        <a href="{{ url_for('recruitment.download_recruitment', filename=recruitment.filename) }}">
+                            <button class="btn btn-primary">Detailed Instruction Download</button>
+                        </a>
+                    </div>
+                </div>
+                <!--作者-->
+                <div class="post-author col-sm-offset-1 col-sm-10">
+                    <div class="panel panel-default" style="background-color: #e0f5ff">
+                        <div class="panel-heading" style="background-color: #e0f5ff">
+                            <h3 class="panel-title">Professor</h3>
+                        </div>
+
+                        <div class="panel-body">
+                            <div class=" col-sm-2">
+                                <a class="head-photo" href="{{ url_for('main.user', username=recruitment.professor.username) }}">
+                                {% if recruitment.professor.avatar_img %}
+                                    <img class="img-rounded profile-thumbnail" src="{{ recruitment.professor.avatar_img }}" alt="avatar"  style="width: 60px; height: 60px">
+                                {% else %}
+                                    <img class="img-rounded profile-thumbnail" src="{{ recruitment.professor.gravatar(size=60) }}" alt="avatar">
+                                {% endif %}
+                                </a>
+                            </div>
+                            <div class="col-sm-3">
+                                <h4>
+                                    <a href="{{ url_for('main.user', username=recruitment.professor.username) }}">
+                                        {{ recruitment.professor.username }}
+                                         {% if recruitment.professor.can(Permission.RECRUITMENT) %}
+                                            <svg class="icon" viewBox="0 0 1024 1024" width="17" height="17" style="margin: 0">
+                                                <path d="M959.786667 148.906667l-44.330667-0.725333c-1.024 0-100.437333-2.048-203.050667-41.728-105.301333-40.789333-173.141333-87.552-173.781333-88.021333L511.872 0 485.248 18.474667C484.608 18.901333 416.768 65.706667 311.466667 106.453333 208.938667 146.218667 109.482667 148.181333 108.544 148.181333L64 148.906667l0 430.464C64 795.477333 355.328 1024 511.957333 1024 668.714667 1024 960 795.477333 960 579.370667L959.786667 148.906667zM321.877333 772.48 321.877333 355.413333 282.112 355.413333 282.112 317.482667 441.173333 317.482667l0 189.610667 200.192-189.610667 157.696 0L321.877333 772.48z" fill="#3688FF"></path>
+                                            </svg>
+                                        {% endif %}
+                                    </a>
+                                </h4>
+                            </div>
+                            <div class="col-sm-5">
+                                <h6>Institution: {{ recruitment.professor.college }}</h6>
+                            </div>
+                              {% if current_user.can(Permission.FOLLOW) and recruitment.professor != current_user %}
+                                  {% if not current_user.is_following(recruitment.professor) %}
+                                      <a align="center" href="{{ url_for('main.follow', username=recruitment.professor.username) }}" class="btn btn-info" style="margin-top: 12px">Follow</a>
+                                  {% else %}
+                                      <a align="center" href="{{ url_for('main.unfollow', username=recruitment.professor.username) }}" class="btn btn-info" style="margin-top: 12px">Unfollow</a>
+                                  {% endif %}
+                              {% endif %}
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            {#评论区#}
+            <div class="container col-sm-offset-1 col-sm-10 comment-cont" style="margin-top: 30px">
+                <h3 id="comments">Resume Display</h3>
+                {% include 'recruitment/_resumes.html' %}
+                {% if current_user.can(Permission.COMMENT) %}
+                    <div class="comment-form">
+                        <form role="form" class="form-signin" method="post" enctype="multipart/form-data">
+                            <div>
+                                <label for="title">
+                                    <h3 name="title" id="title">Resume Submission</h3>
+                                </label>
+                            </div>
+                            <div>
+                                <label for="resume_body">
+                                    <textarea name="resume_body" id="resume_body" rows="4" placeholder="Any explanation here"
+                                     style="margin-left: 50px; margin-top: 10px; width: 800px; resize: none;"></textarea>
+                                </label>
+                            </div>
+                            <div style="margin-left: 50px; margin-top: 20px;">
+                                <label for="resume_detail">
+                                    <input name="resume_detail" id="resume_detail" type="file" class="btn btn-default">
+                                </label>
+                                <button type="submit" id="submit" class="btn btn-success" style="float: right; margin-right: 80px">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                {% endif %}
+                {% if pagination %}
+                    <div class="pagination" style="margin-left: 50px">
+                        {{ macros.pagination_widget(pagination, 'recruitment.recruitments', fragment='#resumes', id=recruitment.id) }}
+                    </div>
+                {% endif %}
+            </div>
+        </li>
+    </ul>
+
+
+{% endblock %}
